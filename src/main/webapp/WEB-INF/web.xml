@@ -6,4 +6,33 @@
 	
 	<display-name>spring-mvc</display-name>
 	
+	<!-- Spring 应用上下文，理解层次化的ApplicationContext -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/conf/spring/applicationContext*.xml</param-value>
+	</context-param>
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<!-- DispatcherServlet,SpringMVC的核心 -->
+	<servlet>
+		<servlet-name>mvc-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- DispatcherServlet对应的上下文配置
+			默认为/WEB-INF/$servlet-name-servlet.xml -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/conf/spring/mvc-dispather-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>mvc-dispatcher</servlet-name>
+		<!-- mvc-dispather 拦截所有的请求 -->
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	
 </web-app>
