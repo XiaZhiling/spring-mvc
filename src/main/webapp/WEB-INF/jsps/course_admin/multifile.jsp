@@ -11,7 +11,7 @@
 <body>
 <div align="center">
 <h1>上传多个附件</h1>
-<form method="post" action="/courses/doUpload2" enctype="multipart/form-data">
+<form method="post" action="<%=request.getContextPath()%>/courses/doUpload2" enctype="multipart/form-data">
 <input type="file" name="file1"/>
 <br/>
 <input type="file" name="file2"/>

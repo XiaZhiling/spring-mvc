@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,89 +27,78 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.ling.springmvc.model.Course;
 import com.ling.springmvc.service.CourseService;
 
-
-
 @Controller
 @RequestMapping("/courses")
-// /courses/**
 public class CourseController {
 	
 	private static Logger log = LoggerFactory.getLogger(CourseController.class);
-
+	
 	private CourseService courseService;
-
+	
 	@Autowired
 	public void setCourseService(CourseService courseService) {
 		this.courseService = courseService;
 	}
-
 	
-	//±¾·½·¨½«´¦Àí /courses/view?courseId=123 ĞÎÊ½µÄURL
-	@RequestMapping(value="/view", method=RequestMethod.GET)
-	public String viewCourse(@RequestParam("courseId") Integer courseId,
-			Model model) {
-		
-		
-		log.debug("In viewCourse, courseId = {}", courseId);
-		Course course = courseService.getCoursebyId(courseId);
+	//æœ¬æ–¹æ³•å°†å¤„ç† /courses/view?courseID=123 å½¢å¼çš„URL
+	@RequestMapping(value = "/view",method = RequestMethod.GET)
+	public String viewCourse(@RequestParam("courseID") Integer courseID,Model model) {
+		log.debug("In viewCourse,courseID = {}",courseID);
+		Course course = courseService.getCoursebyId(courseID);
 		model.addAttribute(course);
 		return "course_overview";
 	}
 	
-	//±¾·½·¨½«´¦Àí /courses/view2/123 ĞÎÊ½µÄURL
-	@RequestMapping("/view2/{courseId}")
-	public String viewCourse2(@PathVariable("courseId") Integer courseId,
-			Map<String, Object> model) {
-		
-		log.debug("In viewCourse2, courseId = {}", courseId);
-		Course course = courseService.getCoursebyId(courseId);
-		model.put("course",course);
-		return "course_overview";
-	}
-
-	//±¾·½·¨½«´¦Àí /courses/view3?courseId=123 ĞÎÊ½µÄURL
-	@RequestMapping("/view3")
-	public String viewCourse3(HttpServletRequest request) {
-		
-		Integer courseId = Integer.valueOf(request.getParameter("courseId"));		
-		Course course = courseService.getCoursebyId(courseId);
-		request.setAttribute("course",course);
-		
+	// //--RESFULF é£æ ¼æœ¬æ–¹æ³•å°†å¤„ç† /courses/view2/345å½¢å¼çš„URL
+	@RequestMapping(value = "/view2/{courseID}",method = RequestMethod.GET)
+	public String viewCourse2(@PathVariable("courseID") Integer courseID,Map<String, Object> map) {
+		log.debug("In viewCourse2,courseID = {}",courseID);
+		Course course = courseService.getCoursebyId(courseID);
+		map.put("course", course);
 		return "course_overview";
 	}
 	
-	@RequestMapping(value="/admin", method = RequestMethod.GET, params = "add")
-	public String createCourse(){
+	//servletAPI
+	@RequestMapping("/view3")
+	public String viewCourse3(HttpServletRequest request) {
+		Integer courseID = Integer.valueOf(request.getParameter("courseID"));
+		log.debug("In viewCourse3,courseID = {}",courseID);
+		Course course = courseService.getCoursebyId(courseID);
+		request.setAttribute("course", course);
+		return "course_overview";
+	}
+	
+	
+	@RequestMapping(value ="/admin",method = RequestMethod.GET,params = {"add"})
+	public String createCourse() {
+		
 		return "course_admin/edit";
 	}
 	
-	@RequestMapping(value="/save", method = RequestMethod.POST)
-	public String  doSave(@ModelAttribute Course course){		
-		
+	@RequestMapping(value ="/save",method = RequestMethod.POST)
+	public String doSave(Course course) {//ä¹Ÿå¯ä»¥é€šè¿‡@ModelAttribute å£°æ˜é¡µé¢å’Œmodelçš„ç»‘å®š
+		//doSave(@ModelAttribute Course course)
 		log.debug("Info of Course:");
-		log.debug(ReflectionToStringBuilder.toString(course));
-		
-		//ÔÚ´Ë½øĞĞÒµÎñ²Ù×÷£¬±ÈÈçÊı¾İ¿â³Ö¾Ã»¯
+		log.debug(ReflectionToStringBuilder.toString(course));//commons-lang
+		//åœ¨æ­¤è¿›è¡Œä¸šåŠ¡æ“ä½œï¼Œæ¯”å¦‚æ•°æ®åº“æŒä¹…åŒ–
 		course.setCourseId(123);
 		return "redirect:view2/"+course.getCourseId();
 	}
 	
-	@RequestMapping(value="/upload", method=RequestMethod.GET)
-	public String showUploadPage(@RequestParam(value= "multi", required = false) Boolean multi){	
-		if(multi != null && multi){
-			return "course_admin/multifile";	
+	@RequestMapping(value = "/upload",method = RequestMethod.GET)
+	public String showUploadPage(@RequestParam(value = "multi",required = false)Boolean multi ){
+		if(multi !=null&&multi){
+			return "course_admin/multifile";
 		}
-		return "course_admin/file";		
+		return "course_admin/file";
 	}
 	
-	@RequestMapping(value="/doUpload", method=RequestMethod.POST)
-	public String doUploadFile(@RequestParam("file") MultipartFile file) throws IOException{
-		
+	@RequestMapping(value = "/doUpload",method = RequestMethod.POST)
+	public String doUploadFile(@RequestParam("file") MultipartFile file) throws IOException {
 		if(!file.isEmpty()){
-			log.debug("Process file: {}", file.getOriginalFilename());
-			FileUtils.copyInputStreamToFile(file.getInputStream(), new File("c:\\temp\\imooc\\", System.currentTimeMillis()+ file.getOriginalFilename()));
+			log.debug("Process file :{}",file.getOriginalFilename());
+			FileUtils.copyInputStreamToFile(file.getInputStream(), new File("D:\\temp\\",System.currentTimeMillis()+ file.getOriginalFilename()));
 		}
-		
 		return "success";
 	}
 	
@@ -123,15 +111,11 @@ public class CourseController {
 			MultipartFile file =  multiRequest.getFile(fileName);
 			if(!file.isEmpty()){
 				log.debug("Process file: {}", file.getOriginalFilename());
-				FileUtils.copyInputStreamToFile(file.getInputStream(), new File("c:\\temp\\imooc\\", System.currentTimeMillis()+ file.getOriginalFilename()));
+				FileUtils.copyInputStreamToFile(file.getInputStream(), new File("D:\\temp\\", System.currentTimeMillis()+ file.getOriginalFilename()));
 			}
-			
 		}
-		
 		return "success";
 	}
-	
-	
 	
 	@RequestMapping(value="/{courseId}",method=RequestMethod.GET)
 	public @ResponseBody Course getCourseInJson(@PathVariable Integer courseId){
@@ -144,7 +128,6 @@ public class CourseController {
 		Course course =   courseService.getCoursebyId(courseId);		
 		return new ResponseEntity<Course>(course, HttpStatus.OK);
 	}
-	
-	
-	
+
+
 }

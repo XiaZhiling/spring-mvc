@@ -1,25 +1,24 @@
 package com.ling.springmvc.model;
 
-
 public class Course2 {
 
-	// 课程Id
+	// 璇剧▼Id
 	private Integer courseId;
-	// 课程名称
+	// 璇剧▼鍚嶇О
 	private String title;
-	// 图片路径
+	// 鍥剧墖璺緞
 	private String imgPath;
-	// 学习人数
+	// 瀛︿範浜烘暟
 	private Integer learningNum;
-	// 课程时长
+	// 璇剧▼鏃堕暱
 	private Long duration;
-	// 课程难度
+	// 璇剧▼闅惧害
 	private Integer level;
-	// 课程难度描述
+	// 璇剧▼闅惧害鎻忚堪
 	private String levelDesc;
-	// 课程介绍
+	// 璇剧▼浠嬬粛
 	private String descr;
-	// 课程提纲
+	// 璇剧▼鎻愮翰
 //	private List<Chapter> chapterList;
 
 	public Integer getCourseId() {
